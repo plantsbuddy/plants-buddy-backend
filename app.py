@@ -9,7 +9,7 @@ def index():
 
 
 @app.route('/students')
-def index():
+def other():
     # A welcome message to test our server
     return "<h1>Here are some students!</h1>"
 
