@@ -4,14 +4,21 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    # A welcome message to test our server
-    return "<h1>Welcome to our Mibalo!</h1>"
+    return jsonify(
+        username='Mohsin Ismail',
+        scientific_name='Trofolium stellatum',
+        id='48486454',
+    )
 
 
-@app.route('/students')
-def other():
-    # A welcome message to test our server
-    return "<h1>Here are some students!</h1>"
+# @app.route('/students')
+# def other():
+#     # A welcome message to test our server
+#     return jsonify(
+#         username='Mohsin Ismail',
+#         scientific_name='Trofolium stellatum',
+#         id='48486454',
+#     )
 
 
 # if __name__ == '__main__':
