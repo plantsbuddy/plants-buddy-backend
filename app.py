@@ -2,10 +2,11 @@ from flask import Flask, request, jsonify
 app = Flask(__name__)
 
 
-@app.route('/',methods = ['POST'])
+@app.route('/plant',methods = ['POST'])
 def get_plant_details():
+    data = request.get_json()
     return jsonify(
-        username='Mohsin Ismail',
+        plant=data['plant_name'],
         scientific_name='Trofolium stellatum',
         id='48486454',
     )
