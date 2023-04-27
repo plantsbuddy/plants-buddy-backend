@@ -71,6 +71,6 @@ def get_weather_based_plantation_suggestions(weather_data):
     elif humidity >= 50 and wind_speed >= 10:
         tips += high_humidity_high_wind_tips
 
-    # Randomly pick a gardening tip from the list and print it
+    # Randomly pick 3 gardening tips from the list and return them
     if tips:
-        return {'suggestions': random.choice(tips)}
+        return {'suggestions': random.sample(tips, 3)}

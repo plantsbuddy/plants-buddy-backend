@@ -1,10 +1,12 @@
 from flask import Flask, request, jsonify
 import requests
+import json
 import controllers.plants as plants
 import controllers.diseases as diseases
 import controllers.pests as pests
 import controllers.plant_suggestions as plant_suggestions
 import controllers.plantation_suggestions as plantation_suggestions
+import controllers.general_plantation_tips as general_plantation_tips
 
 app = Flask(__name__)
 
@@ -122,23 +124,44 @@ def get_plant_details():
     return jsonify(response)
 
 
-@app.route('/random-suggestion', methods=['GET'])
+@app.route('/plantation-guides', methods=['GET'])
+def plantation_guides():
+    guides = None
+
+    with open('plantation_guides.json', 'r') as f:
+        # Load the JSON data from the file
+        guides = json.load(f)
+
+    # Print the data
+    return guides
+
+
+@app.route('/random-plantation-suggestion', methods=['GET'])
 def random_suggestion():
-    return jsonify({'suggestion': 'Hello There'})
+    return general_plantation_tips.get_random_plantation_tip()
 
 
 @app.route('/weather-data', methods=['POST'])
 def weather_data():
-    pass
+    weather_data = get_weather_data(request.get_json())
+
+    weather_details = {
+        'temperature': round(weather_data['main']['temp'] - 273.15, 1),
+        'city': weather_data['name'],
+        'weather_status_title': weather_data['weather'][0]['main'],
+        'weather_status_description': weather_data['weather'][0]['description'],
+        'weather_status_icon': f'https://openweathermap.org/img/wn/{weather_data["weather"][0]["icon"]}.png',
+        'humidity': weather_data['main']['humidity'],
+        'wind_speed': weather_data['wind']['speed'],
+        'precipitation': weather_data['rain']['1h'] if 'rain' in weather_data else 0,
+    }
+
+    return jsonify(weather_details)
 
 
 @app.route('/weather-based-suggested-plants', methods=['POST'])
 def weather_based_suggested_plants():
-    body = request.get_json()
-    longitude = body['longitude']
-    latitude = body['latitude']
-
-    weather_data = get_weather_data(longitude, latitude)
+    weather_data = get_weather_data(request.get_json())
 
     suggested_plants = plant_suggestions.get_plant_suggestions(weather_data)
     return jsonify(suggested_plants)
@@ -146,18 +169,17 @@ def weather_based_suggested_plants():
 
 @app.route('/weather-based-plantation-suggestions', methods=['POST'])
 def weather_based_plantation_suggestions():
-    body = request.get_json()
-    longitude = body['longitude']
-    latitude = body['latitude']
-    weather_data = get_weather_data(longitude, latitude)
-
+    weather_data = get_weather_data(request.get_json())
     gardening_suggestions = plantation_suggestions.get_weather_based_plantation_suggestions(
         weather_data)
 
     return jsonify(gardening_suggestions)
 
 
-def get_weather_data(longitude, latitude):
+def get_weather_data(request_body):
+    longitude = request_body['longitude']
+    latitude = request_body['latitude']
+
     url = f'https://api.openweathermap.org/data/2.5/weather?lat={latitude}&lon={longitude}&appid=8e2fa5ebb383d5cd7dd42e1a5bf4d449'
     response = requests.get(url)
     data = response.json()
