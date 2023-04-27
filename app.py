@@ -146,14 +146,14 @@ def weather_data():
     weather_data = get_weather_data(request.get_json())
 
     weather_details = {
-        'temperature': round(weather_data['main']['temp'] - 273.15, 1),
+        'temperature': str(round(weather_data['main']['temp'] - 273.15, 1)),
         'city': weather_data['name'],
         'weather_status_title': weather_data['weather'][0]['main'],
         'weather_status_description': weather_data['weather'][0]['description'],
         'weather_status_icon': f'https://openweathermap.org/img/wn/{weather_data["weather"][0]["icon"]}.png',
-        'humidity': weather_data['main']['humidity'],
-        'wind_speed': weather_data['wind']['speed'],
-        'precipitation': weather_data['rain']['1h'] if 'rain' in weather_data else 0,
+        'humidity': str(weather_data['main']['humidity']),
+        'wind_speed': str(weather_data['wind']['speed']),
+        'precipitation': str(weather_data['rain']['1h'] if 'rain' in weather_data else 0),
     }
 
     return jsonify(weather_details)
