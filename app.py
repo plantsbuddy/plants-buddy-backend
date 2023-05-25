@@ -1,12 +1,12 @@
 from flask import Flask, request, jsonify
 import requests
-import json
 import controllers.plants as plants
 import controllers.diseases as diseases
 import controllers.pests as pests
 import controllers.plant_suggestions as plant_suggestions
 import controllers.plantation_suggestions as plantation_suggestions
 import controllers.general_plantation_tips as general_plantation_tips
+import controllers.plantation_guides as all_plantation_guides
 
 app = Flask(__name__)
 
@@ -126,11 +126,11 @@ def get_plant_details():
 
 @app.route('/plantation-guides', methods=['GET'])
 def plantation_guides():
-    guides = None
+    guides = all_plantation_guides.guides
 
-    with open('plantation_guides.json', 'r') as f:
-        # Load the JSON data from the file
-        guides = json.load(f)
+    # with open('plantation_guides.json', 'r') as f:
+    #     # Load the JSON data from the file
+    #     guides = json.load(f, )
 
     # Print the data
     return guides
